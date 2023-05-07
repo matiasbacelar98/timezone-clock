@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import axios from 'axios';
-import { errorHandler } from '../utils';
+import { errorHandler } from '../utils/errorHandler';
 
 // Quote router
 const quoteRouter = express.Router();
