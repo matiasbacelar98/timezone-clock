@@ -10,8 +10,8 @@ export const PORT = process.env.PORT || '5000';
 export const ENVIRONMENT = process.env.NODE_ENV;
 
 // Custom errors
-export function customErrorMessage(error: unknown, res: Response, statusCode: number) {
-  res.status(statusCode);
+export function errorHandler(error: unknown, res: Response, statusCode?: number) {
+  res.status(statusCode || 500);
 
   // Error is object
   if (error instanceof Error) {
