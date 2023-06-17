@@ -1,0 +1,1 @@
+<template>Clock component</template>

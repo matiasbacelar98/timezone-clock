@@ -1,0 +1,1 @@
+<template>Quote component</template>

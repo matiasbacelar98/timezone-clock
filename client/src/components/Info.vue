@@ -1,0 +1,1 @@
+<template>info component</template>
