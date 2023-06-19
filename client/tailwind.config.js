@@ -12,7 +12,17 @@ module.exports = {
     fontFamily: {
       poppins: ['Poppins', 'sans-serif'],
     },
-    extend: {},
+    extend: {
+      keyframes: {
+        reloading: {
+          '0%': { transform: 'rotate(0deg)' },
+          '100%': { transform: 'rotate(360deg)' },
+        },
+      },
+      animation: {
+        reloading: 'reloading 1s normal linear infinite',
+      },
+    },
   },
   plugins: [],
 };

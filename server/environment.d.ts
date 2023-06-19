@@ -7,6 +7,7 @@ declare global {
       PORT: number;
       QUOTES_API_KEY: string;
       IPINFO_API_KEY: string;
+      ALLOWED_DOMAIN: string;
     }
   }
 }
