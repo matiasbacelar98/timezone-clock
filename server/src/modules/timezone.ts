@@ -33,6 +33,7 @@ async function getTimezoneInfo(req: Request, res: Response) {
       country: data.country,
       countryAbbreviations, // The one to use is fips
       timezoneName: data.timezone,
+      locale: req.headers['accept-language'],
     };
 
     return res.status(200).json(timezoneData);

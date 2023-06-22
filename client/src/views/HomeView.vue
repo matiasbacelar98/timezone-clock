@@ -1,39 +1,61 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onBeforeMount } from 'vue';
 import Info from '../components/Info.vue';
 import Clock from '../components/Clock.vue';
 import Quote from '../components/Quote.vue';
 import Toggle from '../components/Toggle.vue';
 
 //----- State -----//
-const info = ref({
-  data: {
-    region: 'England',
-    country: 'United Kingdom',
-    countryAbbreviations: {
-      continent: 'Europe',
-      region: 'Western Europe',
-      country: 'United Kingdom',
-      capital: 'London',
-      fips: 'UK',
-      iso2: 'GB',
-      iso3: 'GBR',
-      isoNo: '826',
-      internet: 'UK',
-    },
-    timezoneName: 'Europe/London',
-  },
-  isOpen: false,
-});
+const info = ref({ data: {}, timezoneInfo: {}, isOpen: false });
 
 //----- Lifecycle -----//
-// onBeforeMount(() => {
-//   getTimezoneInfo();
-// });
+onBeforeMount(() => {
+  getTimezoneInfo();
+});
+
+//  const currentDate = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+//----- Constants -----//
+const DEV_MODE = 'development';
 
 //----- Utilities -----//
+async function getTimezoneInfo() {
+  try {
+    const response = await fetch(import.meta.env.VITE_TIMEZONE_ENDPOINT);
+
+    // If bad request throw error
+    if (!response.ok) throw new Error(`Error HTTP: ` + response.status);
+
+    // Success
+    const data = await response.json();
+    info.value.data = data;
+    info.value.timezone = {
+      name: data?.timezoneName,
+      dayOfTheYear: getDateOfTheYear(new Date()),
+      dayOfTheWeek: getDayOfTheWeek(new Date()),
+      weekNumber: getWeekNumber(new Date()),
+    };
+  } catch (error) {
+    if (import.meta.env.MODE === DEV_MODE) console.log(error);
+  }
+}
+
 function toggleInfo() {
   info.value.isOpen = !info.value.isOpen;
+}
+
+function getDateOfTheYear(date) {
+  return String(Math.floor((date - new Date(date.getFullYear(), 0, 0)) / 1000 / 60 / 60 / 24));
+}
+
+function getDayOfTheWeek(date) {
+  return String(date.getDay());
+}
+
+function getWeekNumber(date) {
+  const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
+  const pastDaysOfYear = (date - firstDayOfYear) / 86400000;
+  return String(Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7));
 }
 </script>
 
@@ -52,6 +74,6 @@ function toggleInfo() {
       </button>
     </section>
 
-    <Info v-if="info.isOpen" :timezone="info?.data?.timezoneName" />
+    <Info v-if="info.isOpen" :timezone="info?.timezone" />
   </main>
 </template>
