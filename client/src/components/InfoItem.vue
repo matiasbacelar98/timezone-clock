@@ -17,6 +17,6 @@ const props = defineProps({
     }"
   >
     <span class="text-sm inline-block font-medium uppercase tracking-[0.08em]">{{ props.title || 'Not available' }}</span>
-    <p class="text-lg font-semibold tracking-[0.08em] uppercase lg:text-[32px] xl:text-[44px]">{{ props.content || 'Not available' }}</p>
+    <p class="text-lg font-semibold tracking-[0.08em] uppercase lg:text-3xl xl:text-4xl">{{ props.content || 'Not available' }}</p>
   </li>
 </template>

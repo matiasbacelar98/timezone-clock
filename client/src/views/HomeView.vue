@@ -11,8 +11,7 @@ const info = ref({ data: {}, timezoneInfo: {}, isOpen: false });
 const clock = ref({
   currentTime: new Date(),
   formattedTime: '',
-  isTwelveHourFormat: false,
-  dayStatus: '',
+  dayStatus: 'morning',
 });
 
 //----- Lifecycle & Effects -----//
@@ -29,7 +28,7 @@ watch(counter, () => {
   clock.value.formattedTime = timeFormatter(info.value.data.locale, info.value.data.timezoneName).format(clock.value.currentTime);
 
   // Check for updates in day status
-  !clock.value.isTwelveHourFormat ? twentyFourHoursFormat() : twelveHoursFormat();
+  setDayStatus();
 });
 
 //----- Constants -----//
@@ -59,11 +58,8 @@ async function getTimezoneInfo() {
     clock.value.formattedTime = timeFormatter(data.locale, data.timezoneName).format(clock.value.currentTime);
     resume();
 
-    // Define hour format (think if is gonna be used)
-    clock.value.isTwelveHourFormat = timeFormatter(data.locale, data.timezoneName).resolvedOptions()['hour12'];
-
     // Define day status
-    !clock.value.isTwelveHourFormat ? twentyFourHoursFormat() : twelveHoursFormat();
+    setDayStatus();
   } catch (error) {
     if (import.meta.env.MODE === DEV_MODE) console.log(error);
   }
@@ -73,15 +69,31 @@ function toggleInfo() {
   info.value.isOpen = !info.value.isOpen;
 }
 
-function twelveHoursFormat() {}
+function setDayStatus() {
+  const formattedDate = new Intl.DateTimeFormat(info.value.data.locale, {
+    timeZone: info.value.data.timezoneName,
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false, // use 24hour format to do the calculation
+  }).format(new Date());
 
-function twentyFourHoursFormat() {}
+  const currentTime = parseInt(formattedDate);
 
-function timeFormatter(locale, timezone) {
+  if (currentTime < 12) {
+    clock.value.dayStatus = 'morning';
+  } else if (currentTime < 18) {
+    clock.value.dayStatus = 'afternoon';
+  } else {
+    clock.value.dayStatus = 'night';
+  }
+}
+
+function timeFormatter(locale, timezone, hourFormat) {
   return new Intl.DateTimeFormat(locale, {
     timeZone: timezone,
     hour: '2-digit',
     minute: '2-digit',
+    hour12: hourFormat,
   });
 }
 
@@ -108,13 +120,24 @@ function addMinutes(date, minutes) {
 
 <template>
   <main
-    class="font-poppins min-h-screen bg-[url(../assets/img/afternoon.jpg)] bg-cover bg-no-repeat bg-[50%_80%] py-[56px] flex flex-col px-6 justify-between md:px-[80px] lg:px-[120px] xl:px-[160px]"
-    :class="{ relative: info.isOpen }"
+    class="font-poppins min-h-screen bg-cover bg-no-repeat bg-[50%_80%] py-[56px] flex flex-col px-6 justify-between md:px-[80px] lg:px-[120px] xl:px-[160px]"
+    :class="{
+      relative: info.isOpen,
+      // This can be improved =>
+      'bg-[url(../assets/img/night.jpg)]': clock.dayStatus === 'night',
+      'bg-[url(../assets/img/afternoon.jpg)]': clock.dayStatus === 'afternoon',
+      'bg-[url(../assets/img/morning.jpg)]': clock.dayStatus === 'morning',
+    }"
   >
     <Quote v-show="!info.isOpen" />
 
     <section class="md:flex md:justify-between mt-4">
-      <Clock :province="info?.data?.countryAbbreviations?.capital" :country="info?.data?.countryAbbreviations?.fips" :time="clock?.formattedTime" />
+      <Clock
+        :province="info?.data?.countryAbbreviations?.capital"
+        :country="info?.data?.countryAbbreviations?.fips"
+        :time="clock?.formattedTime"
+        :dayStatus="clock?.dayStatus"
+      />
 
       <button class="mt-10 md:mt-0 md:self-end" @click="toggleInfo">
         <Toggle :isOpen="info.isOpen" />
