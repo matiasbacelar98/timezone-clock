@@ -8,7 +8,7 @@
     "server": "nodemon ./dist/app.js",
     "dev": "concurrently \"npm run server\" \"npm run compiler\"",
     "build": "tsc",
-    "run": "node ./dist/app.js"
+    "prod": "node ./dist/app.js"
   },
   "keywords": [],
   "author": "",
