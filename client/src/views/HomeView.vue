@@ -1,12 +1,14 @@
 <script setup>
 import { ref, onBeforeMount, watch } from 'vue';
-import { useInterval } from '@vueuse/core';
+import { useInterval, useTimeoutFn } from '@vueuse/core';
+import Loading from '../components/Loading.vue';
 import Info from '../components/Info.vue';
 import Clock from '../components/Clock.vue';
 import Quote from '../components/Quote.vue';
 import Toggle from '../components/Toggle.vue';
 
 //----- State -----//
+const loading = ref(false);
 const info = ref({ data: {}, timezoneInfo: {}, isOpen: false });
 const clock = ref({
   currentTime: new Date(),
@@ -17,7 +19,12 @@ const clock = ref({
 //----- Lifecycle & Effects -----//
 const { counter, pause, resume } = useInterval(60000, { controls: true });
 
+const { start, stop } = useTimeoutFn(() => {
+  loading.value = false;
+}, 3000);
+
 onBeforeMount(() => {
+  stop();
   pause();
   getTimezoneInfo();
 });
@@ -31,11 +38,20 @@ watch(counter, () => {
   setDayStatus();
 });
 
+watch(
+  () => clock.value.dayStatus,
+  () => {
+    start();
+  }
+);
+
 //----- Constants -----//
 const DEV_MODE = 'development';
 
 //----- Utilities -----//
 async function getTimezoneInfo() {
+  loading.value = true;
+
   try {
     const response = await fetch(import.meta.env.VITE_TIMEZONE_ENDPOINT);
 
@@ -62,6 +78,7 @@ async function getTimezoneInfo() {
     setDayStatus();
   } catch (error) {
     if (import.meta.env.MODE === DEV_MODE) console.log(error);
+    loading.value = false;
   }
 }
 
@@ -119,7 +136,9 @@ function addMinutes(date, minutes) {
 </script>
 
 <template>
+  <Loading v-if="loading" />
   <main
+    v-else
     class="font-poppins min-h-screen bg-cover bg-no-repeat bg-[50%_80%] py-[56px] flex flex-col px-6 justify-between md:px-[80px] lg:px-[120px] xl:px-[160px]"
     :class="{
       relative: info.isOpen,
