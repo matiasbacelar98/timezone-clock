@@ -8,6 +8,10 @@ const props = defineProps({
     type: String,
     default: 'Not available',
   },
+  time: {
+    type: String,
+    default: '00:00',
+  },
 });
 </script>
 1
@@ -19,8 +23,10 @@ const props = defineProps({
       <span class="uppercase sm:text-[18px]">Good night, it’s currently</span>
     </div>
 
-    <div class="font-semibold text-[96px] uppercase sm:tracking-[0.08em] sm:text-[128px]">10:35</div>
+    <div class="font-semibold text-[96px] uppercase sm:tracking-[0.08em] sm:text-[128px]">{{ time }}</div>
 
-    <span class="uppercase tracking-[0.08em] font-medium sm:text-[18px]">in {{ props.province }}, {{ props.country }}</span>
+    <span class="uppercase tracking-[0.08em] font-medium sm:text-[18px]"
+      >{{ props.province !== 'Not available' ? 'in' : '' }} {{ props.province }}, {{ props.country }}</span
+    >
   </article>
 </template>
