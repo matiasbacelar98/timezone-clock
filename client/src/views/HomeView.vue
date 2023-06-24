@@ -153,6 +153,6 @@ function addMinutes(date, minutes) {
       </button>
     </section>
 
-    <Info v-if="info.isOpen" :timezone="info?.timezone" />
+    <Info v-if="info.isOpen" :timezone="info?.timezone" :dayStatus="clock?.dayStatus" />
   </main>
 </template>

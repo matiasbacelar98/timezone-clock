@@ -9,17 +9,27 @@ const props = defineProps({
     dayOfTheWeek: String,
     weekNumber: String,
   },
+  dayStatus: {
+    type: String,
+    default: 'morning',
+  },
 });
 </script>
 
 <template>
-  <section class="absolute bottom-0 left-0 text-white bg-black w-full mt-14 py-14 px-6 bg-opacity-90 md:px-[80px] lg:px-[120px] xl:px-[160px]">
+  <section
+    class="absolute bottom-0 left-0 w-full mt-14 py-14 px-6 bg-opacity-90 md:px-[80px] lg:px-[120px] xl:px-[160px]"
+    :class="{
+      'bg-black text-white': props.dayStatus === 'night',
+      'bg-gray-light text-gray-dark': props.dayStatus !== 'night',
+    }"
+  >
     <ul class="grid gap-y-6 sm:grid-cols-[1fr_auto_1fr] sm:gap-y-8 lg:gap-y-0">
-      <InfoItem title="current timezone" :content="props?.timezone?.name || 'Not available'" />
-      <InfoItem title="day of the week" :content="props?.timezone?.dayOfTheWeek || 'Not available'" />
-      <Line />
-      <InfoItem title="day of the year" :content="props?.timezone?.dayOfTheYear || 'Not available'" :odd="true" />
-      <InfoItem title="week number" :content="props?.timezone?.weekNumber || 'Not available'" :odd="true" />
+      <InfoItem :dayStatus="props?.dayStatus" title="current timezone" :content="props?.timezone?.name || 'Not available'" />
+      <InfoItem :dayStatus="props?.dayStatus" title="day of the week" :content="props?.timezone?.dayOfTheWeek || 'Not available'" />
+      <Line :dayStatus="props?.dayStatus" />
+      <InfoItem :dayStatus="props?.dayStatus" title="day of the year" :content="props?.timezone?.dayOfTheYear || 'Not available'" :odd="true" />
+      <InfoItem :dayStatus="props?.dayStatus" title="week number" :content="props?.timezone?.weekNumber || 'Not available'" :odd="true" />
     </ul>
   </section>
 </template>

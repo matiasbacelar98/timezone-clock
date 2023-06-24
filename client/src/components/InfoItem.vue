@@ -6,6 +6,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  dayStatus: {
+    type: String,
+    default: 'morning',
+  },
 });
 </script>
 
@@ -16,7 +20,15 @@ const props = defineProps({
       'lg:mt-[60px]': props.odd,
     }"
   >
-    <span class="text-sm inline-block font-medium uppercase tracking-[0.08em]">{{ props.title || 'Not available' }}</span>
+    <span
+      class="text-sm inline-block font-medium uppercase tracking-[0.08em]"
+      :class="{
+        'text-gray-medium-high': props.dayStatus !== 'night',
+        'text-white': props.dayStatus === 'night',
+      }"
+    >
+      {{ props.title || 'Not available' }}
+    </span>
     <p class="text-lg font-semibold tracking-[0.08em] uppercase lg:text-3xl xl:text-4xl">{{ props.content || 'Not available' }}</p>
   </li>
 </template>
