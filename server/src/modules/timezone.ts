@@ -1,5 +1,6 @@
 import express, { Request, Response } from 'express';
 import IPinfoWrapper, { IPinfo, LruCache } from 'node-ipinfo';
+import ip from 'ip';
 import lookup from 'country-code-lookup';
 
 import { errorHandler } from '../utils/errorHandler';
@@ -20,7 +21,7 @@ const ipinfoWrapper = new IPinfoWrapper(IPINFO_API_KEY, cache);
 async function getTimezoneInfo(req: Request, res: Response) {
   try {
     // Get ip address from user
-    const ipAddress = String(req.socket.remoteAddress);
+    const ipAddress = String(ip.address());
 
     // Get ip-information
     const data: IPinfo = await ipinfoWrapper.lookupIp(process.env.TEST_IP || ipAddress);
