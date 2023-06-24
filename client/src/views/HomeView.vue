@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onBeforeMount, watch } from 'vue';
-import { useInterval, useTimeoutFn } from '@vueuse/core';
+import { useInterval } from '@vueuse/core';
 import Loading from '../components/Loading.vue';
 import Info from '../components/Info.vue';
 import Clock from '../components/Clock.vue';
@@ -19,12 +19,7 @@ const clock = ref({
 //----- Lifecycle & Effects -----//
 const { counter, pause, resume } = useInterval(60000, { controls: true });
 
-const { start, stop } = useTimeoutFn(() => {
-  loading.value = false;
-}, 3000);
-
 onBeforeMount(() => {
-  stop();
   pause();
   getTimezoneInfo();
 });
@@ -37,13 +32,6 @@ watch(counter, () => {
   // Check for updates in day status
   setDayStatus();
 });
-
-watch(
-  () => clock.value.dayStatus,
-  () => {
-    start();
-  }
-);
 
 //----- Constants -----//
 const DEV_MODE = 'development';
@@ -76,6 +64,8 @@ async function getTimezoneInfo() {
 
     // Define day status
     setDayStatus();
+
+    loading.value = false;
   } catch (error) {
     if (import.meta.env.MODE === DEV_MODE) console.log(error);
     loading.value = false;
