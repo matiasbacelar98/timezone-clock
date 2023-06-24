@@ -95,12 +95,11 @@ function setDayStatus() {
   }
 }
 
-function timeFormatter(locale, timezone, hourFormat) {
+function timeFormatter(locale, timezone) {
   return new Intl.DateTimeFormat(locale, {
     timeZone: timezone,
     hour: '2-digit',
     minute: '2-digit',
-    hour12: hourFormat,
   });
 }
 
