@@ -14,7 +14,7 @@ export function createServer() {
   // Rate limiting
   const limiter = rateLimit({
     windowMs: 10 * 60 * 1000, // 10m
-    max: 2, // 50 req
+    max: 50,
   });
   app.use(limiter);
   app.set('trust proxy', 1);
