@@ -100,7 +100,9 @@ function getDateOfTheYear(date) {
 }
 
 function getDayOfTheWeek(date) {
-  return String(date.getDay());
+  const weekDay = date.getDay();
+  const sundayVal = 0;
+  return weekDay === sundayVal ? '7' : String(weekDay);
 }
 
 function getWeekNumber(date) {
