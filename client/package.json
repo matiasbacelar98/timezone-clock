@@ -12,6 +12,7 @@
   "dependencies": {
     "@vueuse/core": "^10.2.0",
     "epic-spinners": "^2.0.0",
+    "luxon": "^3.3.0",
     "oh-vue-icons": "^1.0.0-rc3",
     "vue": "^3.3.2",
     "vue-router": "^4.2.0"

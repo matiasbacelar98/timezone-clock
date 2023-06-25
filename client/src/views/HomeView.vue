@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onBeforeMount, watch } from 'vue';
 import { useInterval } from '@vueuse/core';
+import { DateTime } from 'luxon';
 import Loading from '../components/Loading.vue';
 import Info from '../components/Info.vue';
 import Clock from '../components/Clock.vue';
@@ -27,7 +28,7 @@ onBeforeMount(() => {
 watch(counter, () => {
   // Add 1 minute
   clock.value.currentTime = addMinutes(clock.value.currentTime, 1);
-  clock.value.formattedTime = timeFormatter(info.value.data.locale, info.value.data.timezoneName).format(clock.value.currentTime);
+  clock.value.formattedTime = timeFormatter(clock.value.currentTime, info.value.data.locale, info.value.data.timezoneName);
 
   // Check for updates in day status
   setDayStatus();
@@ -59,7 +60,7 @@ async function getTimezoneInfo() {
 
     // Start the clock
     clock.value.currentTime = new Date();
-    clock.value.formattedTime = timeFormatter(data.locale, data.timezoneName).format(clock.value.currentTime);
+    clock.value.formattedTime = timeFormatter(clock.value.currentTime, data.locale, data.timezoneName);
     resume();
 
     // Define day status
@@ -76,14 +77,8 @@ function toggleInfo() {
   info.value.isOpen = !info.value.isOpen;
 }
 
-function setDayStatus() {
-  const formattedDate = new Intl.DateTimeFormat(info.value.data.locale, {
-    timeZone: info.value.data.timezoneName,
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false, // use 24hour format to do the calculation
-  }).format(new Date());
-
+function setDayStatus(date) {
+  const formattedDate = DateTime.fromJSDate(date).setZone(info.value.data.timezoneName).setLocale(info.value.data.locale).toFormat('HH:mm'); // use 24hour format to do the calculation
   const currentTime = parseInt(formattedDate);
 
   if (currentTime < 12) {
@@ -95,12 +90,9 @@ function setDayStatus() {
   }
 }
 
-function timeFormatter(locale, timezone) {
-  return new Intl.DateTimeFormat(locale, {
-    timeZone: timezone,
-    hour: '2-digit',
-    minute: '2-digit',
-  });
+function timeFormatter(date, locale, timezone) {
+  const timezoneDate = DateTime.fromJSDate(date).setZone(timezone).setLocale(locale);
+  return `${timezoneDate.get('hour')}:${timezoneDate.get('minute')}`;
 }
 
 function getDateOfTheYear(date) {
