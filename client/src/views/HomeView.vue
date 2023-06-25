@@ -122,18 +122,25 @@ function addMinutes(date, minutes) {
   <Loading v-if="loading" />
   <main
     v-else
-    class="font-poppins min-h-screen bg-cover bg-no-repeat bg-[50%_80%] py-[56px] flex flex-col px-6 justify-between md:px-[80px] lg:px-[120px] xl:px-[160px]"
+    class="font-poppins min-h-screen bg-cover bg-no-repeat bg-[50%_80%] flex flex-col justify-between"
     :class="{
-      relative: info.isOpen,
       // This can be improved =>
       'bg-[url(../assets/img/night.jpg)]': clock.dayStatus === 'night',
       'bg-[url(../assets/img/afternoon.jpg)]': clock.dayStatus === 'afternoon',
       'bg-[url(../assets/img/morning.jpg)]': clock.dayStatus === 'morning',
     }"
   >
-    <Quote v-show="!info.isOpen" />
+    <section v-show="!info.isOpen" class="pt-[56px] px-6 md:px-[80px] lg:px-[120px] xl:px-[160px]">
+      <Quote />
+    </section>
 
-    <section class="md:flex md:justify-between mt-4">
+    <section
+      class="px-6 md:px-[80px] lg:px-[120px] xl:px-[160px] md:flex md:justify-between"
+      :class="{
+        'py-[56px]': !info.isOpen,
+        'pt-[56px]': info.isOpen,
+      }"
+    >
       <Clock
         :province="info?.data?.countryAbbreviations?.capital"
         :country="info?.data?.countryAbbreviations?.fips"

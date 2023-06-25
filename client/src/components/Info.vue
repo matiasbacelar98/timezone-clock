@@ -18,7 +18,7 @@ const props = defineProps({
 
 <template>
   <section
-    class="absolute bottom-0 left-0 w-full mt-14 py-14 px-6 bg-opacity-90 md:px-[80px] lg:px-[120px] xl:px-[160px]"
+    class="w-full mt-14 sm:mt-6 py-14 px-6 bg-opacity-90 md:px-[80px] lg:px-[120px] xl:px-[160px]"
     :class="{
       'bg-black text-white': props.dayStatus === 'night',
       'bg-gray-light text-gray-dark': props.dayStatus !== 'night',
