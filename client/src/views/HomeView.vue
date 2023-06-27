@@ -92,7 +92,9 @@ function setDayStatus(date) {
 
 function timeFormatter(date, locale, timezone) {
   const timezoneDate = DateTime.fromJSDate(date).setZone(timezone).setLocale(locale);
-  return `${timezoneDate.get('hour')}:${timezoneDate.get('minute')}`;
+  const hours = timezoneDate.get('hour') < 10 ? `0${timezoneDate.get('hour')}` : `${timezoneDate.get('hour')}`;
+  const minutes = timezoneDate.get('minute') < 10 ? `0${timezoneDate.get('minute')}` : `${timezoneDate.get('minute')}`;
+  return `${hours}:${minutes}`;
 }
 
 function getDateOfTheYear(date) {
@@ -122,7 +124,7 @@ function addMinutes(date, minutes) {
   <Loading v-if="loading" />
   <main
     v-else
-    class="font-poppins min-h-screen bg-cover bg-no-repeat bg-[50%_80%] flex flex-col justify-between"
+    class="font-poppins w-full bg-cover bg-no-repeat bg-[50%_80%]"
     :class="{
       // This can be improved =>
       'bg-[url(../assets/img/night.jpg)]': clock.dayStatus === 'night',
@@ -130,29 +132,31 @@ function addMinutes(date, minutes) {
       'bg-[url(../assets/img/morning.jpg)]': clock.dayStatus === 'morning',
     }"
   >
-    <section v-show="!info.isOpen" class="pt-[56px] px-6 md:px-[80px] lg:px-[120px] xl:px-[160px]">
-      <Quote />
-    </section>
+    <div class="flex flex-col justify-between min-h-screen backdrop-brightness-[.8]">
+      <section v-show="!info.isOpen" class="pt-[56px] px-6 md:px-[80px] lg:px-[120px] xl:px-[160px]">
+        <Quote />
+      </section>
 
-    <section
-      class="px-6 md:px-[80px] lg:px-[120px] xl:px-[160px] md:flex md:justify-between"
-      :class="{
-        'py-[56px]': !info.isOpen,
-        'pt-[56px]': info.isOpen,
-      }"
-    >
-      <Clock
-        :province="info?.data?.countryAbbreviations?.capital"
-        :country="info?.data?.countryAbbreviations?.fips"
-        :time="clock?.formattedTime"
-        :dayStatus="clock?.dayStatus"
-      />
+      <section
+        class="px-6 md:px-[80px] lg:px-[120px] xl:px-[160px] md:flex md:justify-between"
+        :class="{
+          'py-[56px]': !info.isOpen,
+          'pt-[56px]': info.isOpen,
+        }"
+      >
+        <Clock
+          :province="info?.data?.countryAbbreviations?.capital"
+          :country="info?.data?.countryAbbreviations?.fips"
+          :time="clock?.formattedTime"
+          :dayStatus="clock?.dayStatus"
+        />
 
-      <button class="mt-10 md:mt-0 md:self-end" @click="toggleInfo">
-        <Toggle :isOpen="info.isOpen" />
-      </button>
-    </section>
+        <button class="mt-10 md:mt-0 md:self-end" @click="toggleInfo">
+          <Toggle :isOpen="info.isOpen" />
+        </button>
+      </section>
 
-    <Info v-if="info.isOpen" :timezone="info?.timezone" :dayStatus="clock?.dayStatus" />
+      <Info v-if="info.isOpen" :timezone="info?.timezone" :dayStatus="clock?.dayStatus" />
+    </div>
   </main>
 </template>
