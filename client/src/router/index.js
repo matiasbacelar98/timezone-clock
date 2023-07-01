@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '../views/HomeView.vue';
+import NotFoundView from '../views/NotFoundView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -10,6 +11,13 @@ const router = createRouter({
       component: HomeView,
       meta: {
         title: 'Timezone clock',
+      },
+    },
+    {
+      path: '/:notFound',
+      component: NotFoundView,
+      meta: {
+        title: 'Not found',
       },
     },
   ],
